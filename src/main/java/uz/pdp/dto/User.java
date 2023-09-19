@@ -1,11 +1,14 @@
 package uz.pdp.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Data
 public class User {
     public String email;
     public String fullName;

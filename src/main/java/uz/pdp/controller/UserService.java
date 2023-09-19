@@ -2,6 +2,7 @@ package uz.pdp.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import uz.pdp.dao.UserDAO;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,11 +20,18 @@ import java.sql.SQLException;
 
 public class UserService {
     private final Connection connection;
+    private final UserDAO userDAO;
+
+    @Autowired
+    public UserService(DataSource dataSource, UserDAO userDAO) throws SQLException {
+        this.connection = dataSource.getConnection();
+        this.userDAO = userDAO;
+    }
 
     @RequestMapping("/users")
-    public ModelAndView getUsers(@RequestParam(value = "message", required = false) String message) throws SQLException {
+    public ModelAndView getUsers(@RequestParam(value = "message", required = false) String message) {
         ModelAndView modelAndView = new ModelAndView("Users");
-        modelAndView.addObject("users", new UserDAO().getAllUsers());
+        modelAndView.addObject("users",userDAO.getAllUsers());
         modelAndView.addObject("message", message);
         return modelAndView;
     }
@@ -75,7 +84,7 @@ public class UserService {
         }
         ps.executeUpdate();
         modelAndView.addObject("message", "Successfully changed!");
-        modelAndView.addObject("users", new UserDAO().getAllUsers());
+        modelAndView.addObject("users", userDAO.getAllUsers());
         return modelAndView;
     }
 }

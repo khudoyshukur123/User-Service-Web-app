@@ -1,6 +1,8 @@
 package uz.pdp.dao;
 
-import uz.pdp.config.ObjectsConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import uz.pdp.dto.User;
 
 import java.sql.Connection;
@@ -10,8 +12,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class UserDAO {
-    Connection con = new ObjectsConfig().getConnection();
+    private final Connection con;
+
+    @Autowired
+    public UserDAO(JdbcTemplate jdbcTemplate) throws SQLException {
+        this.con = jdbcTemplate.getDataSource().getConnection();
+    }
 
     public List<User> getAllUsers() {
         try {
